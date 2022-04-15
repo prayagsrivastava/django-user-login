@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: django-user-login
-Version: 0.0.1
+Version: 0.0.2
 Summary: A django user authentication and login application.
 Home-page: https://github.com/prayagsrivastava/django-user-login
 Author: Prayag Srivastava
