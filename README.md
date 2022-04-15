@@ -25,14 +25,17 @@ Instructions
 ### 5.  In your settings.py file include the following:
 
         SITE_TITLE = 'your site title'
-        
         LOGIN_URL = '/authentication/'
-
         EMAIL_HOST = 'email-host'
         EMAIL_PORT = email-port
         EMAIL_HOST_USER = 'email-address'
         EMAIL_HOST_PASSWORD = 'email-password'
         EMAIL_USE_TLS = True
+        FAVICON_URL = '/path/to/favicon.ico'
+
+- #### Code used to include favicon.ico in the application's html templates is -
+
+            <link rel="icon" href="{{FAVICON_URL}}" type = "image/x-icon">
 
 ### 6.  Include these lines within the head tag of your [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1) (optional)
 
@@ -68,3 +71,5 @@ Instructions
 - #### Logout using JS
             <a href="" onclick="logout(event);">Logout</a>
 - #### The above functionality will reload the current page after logging the user out
+
+### 10. To add a favicon image, add the following line to `settings.py`

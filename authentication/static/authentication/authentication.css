@@ -15,3 +15,13 @@
 body {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+
+#auhsiteheader .navbar .container-fluid .collapse .navbar-nav .nav-item .nav-link {
+    color: black;
+    text-decoration: none;
+}
+  
+#auhsiteheader .navbar .container-fluid .collapse .navbar-nav .nav-item .nav-link:hover {
+    color: black;
+    text-decoration: underline;
+}

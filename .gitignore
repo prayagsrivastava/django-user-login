@@ -1,9 +1,5 @@
-myauth/
-mytest/
 db.sqlite3
-manage.py
 __pycache__
 */__pycache__
-
-static/
-templates/
+*/*/__pycache__
+static/assets/

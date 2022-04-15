@@ -47,7 +47,8 @@ def login_view(request):
     
     context = {
         "sitetitle": site_title,
-        "login_error":login_error
+        "login_error":login_error,
+        'FAVICON_URL': settings.FAVICON_URL
     }
     return render(
         request,
