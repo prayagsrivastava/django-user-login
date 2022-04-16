@@ -10,31 +10,28 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if not request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authentication:login' %}">Authentication</a>
+                        <a class="nav-link" href="{% url 'authentication:login' %}"><span>Login</span></a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
+                    {% else %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span>{{request.user.username}}</span>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarAuthDropdown">
+                            <li><a class="dropdown-item" href="#"><span>Account</span></a></li>
+                            <li><hr class="text-lght bg-light dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="" onclick="logout(event);"><span>Logout</span></a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
-                    </li> -->
+                    {% endif %}
+                    <!---->
                 </ul>
-                <!-- <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form> -->
+                <form class="d-flex" onclick="headerSearchForm(event);">
+                    <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-dark-outline btn-sm" id="headerSearchFormBtn" type="submit">Search</button>
+                </form>
             </div>
         </div>
     </nav>
