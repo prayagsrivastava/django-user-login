@@ -3,6 +3,8 @@ include README.md
 exclude manage.py
 recursive-include authentication/static *
 recursive-include authentication/templates *
+recursive-include authentication/customer/templates *
+recursive-include authentication/customer/static *
 recursive-include docs *
 global-exclude *.py[cod]
 prune store

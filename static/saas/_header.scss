@@ -1,0 +1,38 @@
+#siteheader {
+    .navbar {
+        .container-fluid {
+            .collapse {
+                .navbar-nav {
+                    .nav-item {
+                        .nav-link {
+                            span {
+                                color: white;
+                                text-decoration: none;
+                                &:hover {
+                                    color: white;
+                                    text-decoration: underline;
+                                }
+                            }
+                        }
+                        .dropdown-menu {
+                            background-color: $dark;
+                            border-color: $dark;
+                            li > .dropdown-item {
+                                color: $light;
+                                background-color: $dark;
+                                border-color: $dark;
+                                &:hover {
+                                    color: $dark;
+                                    background-color: $light;
+                                    text-decoration: none;
+                                    border-color: $dark;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,11 +3,11 @@ __pycache__
 */__pycache__
 */*/__pycache__
 static/assets/
-myshop/
-store/
-static/
-templates/
-manage.py
+# myshop/
+# store/
+# static/
+# templates/
+# manage.py
 
 build/
 dist/
