@@ -1,8 +1,6 @@
 name: Publish Django distributions to PyPI and TestPyPI
 
-on:
-  push:
-    branches: [ $default-branch ]
+on: push
 
 jobs:
   build-n-publish:
@@ -37,5 +35,4 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
-        repository_url: https://github.com/prayagsrivastava/django-user-login
     
