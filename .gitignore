@@ -1,13 +1,14 @@
-db.sqlite3
 __pycache__
 */__pycache__
 */*/__pycache__
 static/assets/
-# myshop/
-# store/
-# static/
-# templates/
-# manage.py
+
+db.sqlite3
+myshop/
+store/
+static/
+templates/
+manage.py
 
 build/
 dist/
