@@ -8,3 +8,7 @@ store/
 static/
 templates/
 manage.py
+
+build/
+dist/
+*.egg-info
