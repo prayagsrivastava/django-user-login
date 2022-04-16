@@ -4,10 +4,3 @@ recursive-include authentication/static *
 recursive-include authentication/templates *
 recursive-include docs *
 global-exclude *.py[cod]
-
-prune myshop*
-prune store*
-exclude db.sqlite3
-exclude manage.py
-prune templates*
-prune static*
