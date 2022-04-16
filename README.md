@@ -1,9 +1,11 @@
 # Authentication
 A django user authentication and login application.
 
-### 0.  To install the package, use pip
+### 0.  To install and use the package, use:
         
         pip install django-user-login
+        python manage.py makemigrations
+        python manage.py migrate
 
 Instructions
 
@@ -12,6 +14,7 @@ Instructions
         INSTALLED_APPS = [
             ...
             'authentication',
+            'authentication.customer',
         ]
 
 ### 2.	The App requires [bootstrap@5.3.1](https://getbootstrap.com/docs/5.1/getting-started/introduction/), [bootstrap-icons@1.8.1](https://icons.getbootstrap.com/) and [Django Sessions](https://docs.djangoproject.com/en/4.0/topics/http/sessions/#enabling-sessions)
@@ -72,4 +75,17 @@ Instructions
             <a href="" onclick="logout(event);">Logout</a>
 - #### The above functionality will reload the current page after logging the user out
 
-### 10. To add a favicon image, add the following line to `settings.py`
+### 10. Optionally, use can set the Site Name as a default template variable for your website, by adding the following command to list of `context_processors`. This will set `sitetitle=SITE_TITLE` for all [templates](https://docs.djangoproject.com/en/4.0/ref/templates/api/#using-requestcontext). You can use the variable name `sitetitle` to access the value of `SITE_TITLE`.
+
+            TEMPLATES = [
+                {
+                    ...
+                    'OPTIONS': {
+                        'context_processors': [
+                            ...
+                            'authentication.contextprocessor.site_title'
+                        ],
+                    },
+                },
+            ]
+

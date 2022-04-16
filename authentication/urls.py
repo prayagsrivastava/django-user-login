@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'authentication'
@@ -19,5 +19,6 @@ urlpatterns = [
     path('recover/resend/', views.resendRecoveryCode),
     path('recover/verify/', views.verifyRecovery),
     path('recover/changepassword/', views.changepassword),
-    
+
+    path('account/', include('authentication.customer.urls'))
 ]

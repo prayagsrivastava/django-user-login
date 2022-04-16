@@ -12,7 +12,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     {% if not request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authentication:login' %}"><span>Login</span></a>
+                        <a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#loginModal"><span>Login</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item dropdown">
@@ -20,7 +20,7 @@
                             <span>{{request.user.username}}</span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarAuthDropdown">
-                            <li><a class="dropdown-item" href="#"><span>Account</span></a></li>
+                            <li><a class="dropdown-item" href="{% url 'authentication:customer:homepage' username=request.user.username %}"><span>Account</span></a></li>
                             <li><hr class="text-lght bg-light dropdown-divider"></li>
                             <li><a class="dropdown-item" href="" onclick="logout(event);"><span>Logout</span></a></li>
                         </ul>
