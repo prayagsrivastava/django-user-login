@@ -4,10 +4,10 @@ __pycache__
 static/assets/
 
 db.sqlite3
-myshop/
-store/
-static/
-templates/
+myshop/*
+store/*
+static/*
+templates/*
 manage.py
 
 build/
