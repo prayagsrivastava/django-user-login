@@ -8,7 +8,8 @@
         "../saas/_variables.scss",
         "../saas/_utilities.scss",
         "../saas/_config.scss",
-        "../saas/_header.scss"
+        "../saas/_header.scss",
+        "../saas/_authentication.scss"
     ],
     "names": [],
     "file": "layout.css"
