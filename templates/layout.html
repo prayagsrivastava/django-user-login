@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="{% static 'assets/node_modules/bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/node_modules/bootstrap-icons/font/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'css/layout.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
+
+    <link rel="icon" href="{% static 'favicon_io/favicon.ico' %}" type = "image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon_io/site.webmanifest' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+    {% block style %}{% endblock %}
+</head>
+
+<body class="p-1 m-1">
+    {% include 'authentication/modals.html' %}
+    {% include 'header.html' with request=request %}
+    {% block body %}{% endblock %}
+    <script src="{% static 'assets/node_modules/handlebars/dist/handlebars.js' %}"></script>
+    <script src="{% static 'assets/node_modules/jquery/dist/jquery.js' %}"></script>
+    <script src="{% static 'assets/node_modules/bootstrap/dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/layout.js' %}"></script>
+    <script src="{% static 'authentication/authentication.js' %}"></script>
+    {% block script %}{% endblock %}
+
+    <!--Script for tooltips-->
+    <script>
+    	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <!--Script for popovers-->
+    <script>
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+    </script>
+</body>
+</html>
