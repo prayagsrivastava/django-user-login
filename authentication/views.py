@@ -117,19 +117,17 @@ def register(request):
         return JsonResponse({"success": False, "message": "This email is associated with another account."})
 
     code = str(random.randint(100000, 999999))
-    ###########
-    print(code)
-    ###########
-    # try:
-    #     send_mail(
-    #         'Verification Code',
-    #         f'Your verification code is {code}.',
-    #         settings.EMAIL_HOST_USER,
-    #         [email],
-    #         fail_silently=False,
-    #     )
-    # except:
-    #     return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except:
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["register"] = {
         "first_name": first_name.strip().lower().title(),
@@ -156,22 +154,19 @@ def resendVerificationCode(request):
         return JsonResponse({"success": False, "message": "Invalid Request"})
     
     code = str(random.randint(100000, 999999))
-    ###########
-    print(code)
-    ###########
-    # email = request.session["register"]["email"]
-    # try:
-    #     send_mail(
-    #         'Verification Code',
-    #         f'Your verification code is {code}.',
-    #         settings.EMAIL_HOST_USER,
-    #         [email],
-    #         fail_silently=False,
-    #     )
-    # except:
-    #     request.session["register"].clear()
-    #     request.session["register"] = None
-    #     return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    email = request.session["register"]["email"]
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except:
+        request.session["register"].clear()
+        request.session["register"] = None
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["register"]["code"] = code
     request.session.modified = True
@@ -225,19 +220,16 @@ def recover(request):
     
     email = user.email
     code = str(random.randint(100000, 999999))
-    ###########
-    print(code)
-    ###########
-    # try:
-    #     send_mail(
-    #         'Verification Code',
-    #         f'Your verification code is {code}.',
-    #         settings.EMAIL_HOST_USER,
-    #         [email],
-    #         fail_silently=False,
-    #     )
-    # except:
-    #     return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except:
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["recover"] = {
         "user_id": user.id,
@@ -262,22 +254,19 @@ def resendRecoveryCode(request):
         return JsonResponse({"success": False, "message": "Invalid Request"})
     
     code = str(random.randint(100000, 999999))
-    ###########
-    print(code)
-    ###########
-    # email = request.session["recover"]["email"]
-    # try:
-    #     send_mail(
-    #         'Verification Code',
-    #         f'Your verification code is {code}.',
-    #         settings.EMAIL_HOST_USER,
-    #         [email],
-    #         fail_silently=False,
-    #     )
-    # except:
-    #     request.session["recover"].clear()
-    #     request.session["recover"] = None
-    #     return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    email = request.session["recover"]["email"]
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except:
+        request.session["recover"].clear()
+        request.session["recover"] = None
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["recover"]["code"] = code
     request.session["recover"]["verified"] = False

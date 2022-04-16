@@ -1,5 +1,5 @@
-{% extends 'authentication/layout.html' %}
-
+{% extends 'customer/layout.html' %}
+{% load static %}
 
 {% block title %}My Account{% endblock %}
 {% block style %}
@@ -9,13 +9,11 @@
 {% block body %}
 <div class="container mt-3 text-center">
     <div class="row">
-        <div class="col-md-4 col-12">
-        </div>
-        <div class="col-12 col-md-8">
+        <div class="col-12">
             <h5 style="text-align: start;">
                 Your Profile
-                <a href="" class="text-decoration-none" id="bi-pencil-fill" onclick="editprofile(event);">
-                    <i class="bi bi-pencil-fill text-primary"></i>
+                <a href="" class="text-decoration-none" onclick="editprofile(event);">
+                    <i class="bi bi-pencil-fill text-primary fs-5"></i>
                 </a>
             </h5>
             <hr>
@@ -30,7 +28,12 @@
                 <div class="col-sm-8">{{customer.username}}</div>
                 <hr>
                 <div class="col-sm-4">Email</div>
-                <div class="col-sm-8">{{customer.email}}</div>
+                <div class="col-sm-8">
+                    {{customer.email}}
+                    <a href="" class="text-decoration-none" onclick="editProfileEmail(event);">
+                        <i class="bi bi-pencil-fill text-primary fs-5"></i>
+                    </a>
+                </div>
                 <hr>
                 {% if customer.birth_date %}
                 <div class="col-sm-4">Date of Birth</div>
@@ -43,4 +46,6 @@
 {% endblock %}
 
 
-{% block script %}{% endblock %}
+{% block script %}
+<script src="{% static 'customer/js/homepage.js' %}"></script>
+{% endblock %}
