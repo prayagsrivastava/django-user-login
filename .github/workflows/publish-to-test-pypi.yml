@@ -1,8 +1,6 @@
 name: Publish Django distributions to PyPI and TestPyPI
 
-on:
-  push:
-    branches: [ $default-branch ]
+on: push
 
 jobs:
   build-n-publish:
