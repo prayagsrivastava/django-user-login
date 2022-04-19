@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -9,20 +10,18 @@ from django.db.models import Q
 from . import util
 import random
 from django.conf import settings
-from authentication.customer.models import Customer
 
 @ensure_csrf_cookie
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+
     if request.session.get("register", False):
         request.session["register"].clear()
         request.session["register"] = None
-    
     if request.session.get("recover", False):
         request.session["recover"].clear()
         request.session["recover"] = None
-    
-    if request.user.is_authenticated:
-        return redirect('/')
     
     login_error = None
     if request.method == "POST":
@@ -42,18 +41,27 @@ def login_view(request):
                 login_error = "Invalid Credentials"
 
     try:
-        site_title = settings.SITE_TITLE
+        SITE_TITLE = settings.SITE_TITLE
     except AttributeError:
-        site_title = None
+        SITE_TITLE = 'Django Homepage'
+    else:
+        SITE_TITLE = settings.SITE_TITLE
     
+    try:
+        FAVICON_IO_URL = settings.FAVICON_IO_URL
+    except AttributeError:
+        FAVICON_IO_URL = '/authentication/static/authentication/favicon_io/favicon.ico'
+    else:
+        FAVICON_IO_URL = settings.FAVICON_IO_URL
+
     context = {
-        "sitetitle": site_title,
-        "login_error":login_error,
-        'FAVICON_URL': settings.FAVICON_URL
+        "login_error": login_error,
+        "SITE_TITLE": SITE_TITLE,
+        "FAVICON_IO_URL": FAVICON_IO_URL
     }
     return render(
         request,
-        'authentication/homepage.html',
+        'authentication/login.html',
         context
     )
 
@@ -117,7 +125,6 @@ def register(request):
         return JsonResponse({"success": False, "message": "This email is associated with another account."})
 
     code = str(random.randint(100000, 999999))
-    
     try:
         send_mail(
             'Verification Code',
@@ -193,14 +200,6 @@ def verifyRegistration(request):
     user.last_name = request.session["register"]["last_name"]
     user.save()
 
-    customer = Customer.objects.create(
-        user=user,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        username=user.username
-    )
-
     request.session["register"].clear()
     request.session["register"] = None
     return JsonResponse({"success": True})
@@ -220,6 +219,7 @@ def recover(request):
     
     email = user.email
     code = str(random.randint(100000, 999999))
+
     try:
         send_mail(
             'Verification Code',
@@ -254,6 +254,7 @@ def resendRecoveryCode(request):
         return JsonResponse({"success": False, "message": "Invalid Request"})
     
     code = str(random.randint(100000, 999999))
+
     email = request.session["recover"]["email"]
     try:
         send_mail(
@@ -313,6 +314,284 @@ def changepassword(request):
     user.save()
     request.session["recover"].clear()
     request.session["recover"] = None
+    email = user.email
+    try:
+        send_mail(
+            'Security Information',
+            'Your password was just changed.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=True,
+        )
+    except:
+        pass
+    return JsonResponse({"success": True})
+
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
+
+@login_required
+def account(request, username):
+    if username != request.user.username:
+        return HttpResponseRedirect(reverse('authentication:account', args=[request.user.username]))
+    
+    try:
+        SITE_TITLE = settings.SITE_TITLE
+    except AttributeError:
+        SITE_TITLE = 'Django Authentication'
+    else:
+        SITE_TITLE = settings.SITE_TITLE
+    
+    try:
+        FAVICON_IO_URL = settings.FAVICON_IO_URL
+    except AttributeError:
+        FAVICON_IO_URL = '/authentication/static/authentication/favicon_io/favicon.ico'
+    else:
+        FAVICON_IO_URL = settings.FAVICON_IO_URL
+
+    context = {
+        "SITE_TITLE": SITE_TITLE,
+        "FAVICON_IO_URL": FAVICON_IO_URL
+    }
+
+    if request.session.get("emailsecurity", False):
+        del request.session["emailsecurity"]
+    return render(
+        request,
+        'authentication/homepage.html',
+        context
+    )
+
+
+
+@login_required
+def details(request, username):
+    try:
+        person = User.objects.get(id=request.user.id)
+    except:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    p = {
+        "id": person.id,
+        "first_name": person.first_name,
+        "last_name": person.last_name,
+        "username": person.username,
+        "email": person.email
+    }
+
+    return JsonResponse({"success": True, "person": p})
+
+
+@login_required
+def editDetails(request, username):
+    if request.method == "GET" or username != request.user.username or not User.objects.filter(id=request.user.id).exists():
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    first_name = request.POST["first_name"]
+    last_name = request.POST["last_name"]
+    username_new = request.POST["username_new"]
+    email = request.POST["email"]
+
+    if not first_name or not last_name or not username_new or not email:
+        return JsonResponse({"success": False, "message": "Incomplete Form"})
+    if email != request.user.email:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+
+    first_name = first_name.strip().title()
+    last_name = last_name.strip().title()
+    username_new = username_new.strip()
+
+    p =  User.objects.filter(id=request.user.id).first()
+    if username != username_new:
+        if User.objects.filter(username=username_new).exists():
+            return JsonResponse({"success": False, "message": "Username Already Exists"})
+        else:
+            p.username = username_new
+    
+    p.first_name = first_name
+    p.last_name = last_name
+    p.save()
+    return JsonResponse({"success": True})
+
+
+@login_required
+def emailsecuritycheck(request, username):
+    if username != request.user.username or not User.objects.filter(id=request.user.id).exists():
+        return JsonResponse({"success": False, "message": "Invalid Request", "status": False})
+    elif not request.session.get("emailsecurity", False) or not request.session["emailsecurity"]:
+        return JsonResponse({"success": True, "message": "Invalid Credentials", "status": False, "username": request.user.username})
+    else:
+        return JsonResponse({"success": True, "message": "ok", "status": True, "username": request.user.username, "email": request.user.email})
+
+
+@login_required
+def emailsecurityconfirm(request, username):
+    if username != request.user.username or not User.objects.filter(id=request.user.id).exists() or request.method == "GET":
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    password = request.POST["password"]
+    if not password:
+        return JsonResponse({"success": False, "message": "Incomplete Form"})
+    
+    user = User.objects.filter(id=request.user.id).first()
+    if user and authenticate(request, username=user.username, password=password):
+        request.session["emailsecurity"] = True
+        return JsonResponse({"success": True, "username": request.user.username, "email": request.user.email})
+    else:
+        return JsonResponse({"success": False, "message": "Invalid Credentials"})
+
+
+
+@login_required
+def checkemail(request, username):
+    if username != request.user.username or not User.objects.filter(id=request.user.id).exists()\
+        or request.method == "GET" or not request.session.get("emailsecurity", False):
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    email = request.POST["email"].strip()
+    if not email:
+        return JsonResponse({"success": False, "message": "Incomplete Form"})
+    if email == request.user.email:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "message": "This email is associated with another account."})
+    
+    code = str(random.randint(100000, 999999))
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        send_mail(
+            'Security Information',
+            f'Email change is under process...',
+            settings.EMAIL_HOST_USER,
+            [request.user.email],
+            fail_silently=False,
+        )
+    except:
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+
+    request.session["changeEmail"] = {
+        "username": request.user.username,
+        "current_email": request.user.email,
+        "id": request.user.id,
+        "new_email": email,
+        "code": code
+    }
+    request.session.modified = True
+
+    return JsonResponse({"success": True, "username": request.user.username, "new_email": email})
+
+
+@login_required
+def cancelCheckemail(request, username):
+    if username != request.user.username:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    if request.session.get("changeEmail", False):
+        del request.session["changeEmail"]
+    if request.session.get("emailsecurity", False):
+        del request.session["emailsecurity"]
+    return JsonResponse({"success": True})
+
+
+@login_required
+def reconfirmCheckemail(request, username):
+    if username != request.user.username or not request.session.get("changeEmail", False)\
+        or not request.session.get("emailsecurity", False) or request.session["changeEmail"]["username"] != username:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    code = str(random.randint(100000, 999999))
+    email = request.session["changeEmail"]["new_email"]
+    try:
+        send_mail(
+            'Verification Code',
+            f'Your verification code is {code}.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except:
+        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+
+    request.session["changeEmail"]["code"] = code
+    request.session.modified = True
+
+    return JsonResponse({"success": True, "username": request.user.username, "new_email": email})
+
+    
+    
+@login_required
+def changeEmail(request, username):
+    if username != request.user.username or not request.session.get("changeEmail", False)\
+        or not request.session.get("emailsecurity", False) or request.session["changeEmail"]["username"] != username\
+            or request.method == "GET" or not User.objects.filter(id=request.user.id).exists():
+            return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    code = request.POST["code"]
+    if not code:
+        return JsonResponse({"success": False, "message": "Incomplete Form"})
+    
+    if code != request.session["changeEmail"]["code"]:
+        return JsonResponse({"success": False, "message": "Invalid Code"})
+    
+    user = User.objects.get(id=request.user.id)
+    if user.email != request.session["changeEmail"]["current_email"]:
+        return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    user.email = request.session["changeEmail"]["new_email"]
+    user.save()
+
+    old_email = util.encryptemail(request.session["changeEmail"]["current_email"])
+    new_email = util.encryptemail(request.session["changeEmail"]["new_email"])
+
+    try:
+        send_mail(
+            'Security Information',
+            f'Your email was changed from {old_email} to {new_email}.',
+            settings.EMAIL_HOST_USER,
+            [old_email, new_email],
+            fail_silently=False,
+        )
+    except:
+        pass
+    del request.session["changeEmail"]
+    del request.session["emailsecurity"]
+    return JsonResponse({"success": True})
+
+
+@login_required
+def changePassword(request, username):
+    if username != request.user.username or not User.objects.filter(id=request.user.id).exists():
+            return JsonResponse({"success": False, "message": "Invalid Request"})
+    
+    form_username = request.POST["form_username"].strip()
+    current_password = request.POST["current_password"].strip()
+    new_password1 = request.POST["new_password1"].strip()
+    new_password2 = request.POST["new_password2"].strip()
+
+    if not form_username or not current_password or not new_password1 or not new_password2:
+        return JsonResponse({"success": False, "message": "Incomplete Form"})
+    
+    if form_username != username or not authenticate(request, username=username, password=current_password):
+        return JsonResponse({"success": False, "message": "Invalid Credentials"})
+    
+    if new_password1 != new_password2:
+        return JsonResponse({"success": False, "message": "Passwords Don't Match"})
+    
+    if not util.validate_password(new_password2):
+        return JsonResponse({"success": False, "message": "Invalid Password"})
+    
+    user = User.objects.get(id=request.user.id)
+    user.set_password(new_password2)
+    user.save()
     email = user.email
     try:
         send_mail(

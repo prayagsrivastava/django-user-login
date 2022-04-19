@@ -20,5 +20,14 @@ urlpatterns = [
     path('recover/verify/', views.verifyRecovery),
     path('recover/changepassword/', views.changepassword),
 
-    path('account/', include('authentication.customer.urls'))
+    path('<str:username>/', views.account, name='account'),
+    path('<str:username>/details/', views.details),
+    path('<str:username>/details/edit/', views.editDetails),
+    path('<str:username>/details/edit/check/', views.emailsecuritycheck),
+    path('<str:username>/details/edit/check/confirm/', views.emailsecurityconfirm),
+    path('<str:username>/details/edit/check/email/', views.checkemail),
+    path('<str:username>/details/edit/check/email/resend/', views.reconfirmCheckemail),
+    path('<str:username>/details/edit/check/email/cancel/', views.cancelCheckemail),
+    path('<str:username>/details/edit/check/email/change/', views.changeEmail),
+    path('<str:username>/details/edit/change/password/', views.changePassword),
 ]

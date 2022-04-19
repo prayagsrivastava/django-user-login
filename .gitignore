@@ -4,8 +4,8 @@ __pycache__
 static/assets/
 
 db.sqlite3
-myshop/*
-store/*
+testapp/*
+testproject/*
 static/*
 templates/*
 manage.py

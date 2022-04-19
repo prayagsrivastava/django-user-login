@@ -1,31 +1,28 @@
 # Authentication
 A django user authentication and login application.
 
-### 0.  To install and use the package, use:
+### 1.  To install and use the package, use:
         
         pip install django-user-login
-        python manage.py makemigrations
-        python manage.py migrate
 
 Instructions
 
-### 1.	Add "authentication" to your INSTALLED_APPS setting like this:
+### 2.	Add "authentication" to your INSTALLED_APPS setting like this:
 
         INSTALLED_APPS = [
             ...
             'authentication',
-            'authentication.customer',
         ]
 
-### 2.	The App requires [bootstrap@5.3.1](https://getbootstrap.com/docs/5.1/getting-started/introduction/), [bootstrap-icons@1.8.1](https://icons.getbootstrap.com/) and [Django Sessions](https://docs.djangoproject.com/en/4.0/topics/http/sessions/#enabling-sessions)
+### 3.	The App requires [Django Sessions](https://docs.djangoproject.com/en/4.0/topics/http/sessions/#enabling-sessions)
 
-### 3.	Include the authentication URLconf in your project urls.py like this:
+### 4.	Include the authentication URLconf in your project urls.py like this:
 
 		path('authentication/', include('authentication.urls')),
 
-### 4.	Run `python manage.py migrate` to create the User models (you'll need the Admin app enabled).
+### 5.	Run `python manage.py migrate` to create the User models (you'll need the Admin app enabled).
 
-### 5.  In your settings.py file include the following:
+### 6.  In your settings.py file include the following:
 
         SITE_TITLE = 'your site title'
         LOGIN_URL = '/authentication/'
@@ -36,56 +33,61 @@ Instructions
         EMAIL_USE_TLS = True
         FAVICON_URL = '/path/to/favicon.ico'
 
-- #### Code used to include favicon.ico in the application's html templates is -
+### 7 General layout of the starter template / [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1)
 
-            <link rel="icon" href="{{FAVICON_URL}}" type = "image/x-icon">
+        <!doctype html>
+        <html lang="en">
+            <head>
+                ....
+                ....
 
-### 6.  Include these lines within the head tag of your [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1) (optional)
+                <!-- Required meta tags -->
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="{% static 'authentication/authentication.css' %}">
-        <script src="{% static 'authentication/authentication.js' %}"></script>
-        <script>
-        	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            })
-        </script>
+                <!-- Required Authentication CSS -->
+                <link rel="stylesheet" href="{% static 'authentication/css/layout.css' %}">
 
-### 7.  Include this line within the body tag of your [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1) (optional)
-	
-    	{% include 'authentication/modals.html' %}
+                ....
+                ....
+            </head>
+            <body>
+                ....
+                ....
+
+                <!-- Required Authentication Modals -->
+                {% include 'authentication/auth_modals.html' %}
+
+                <!-- Required Authentication JavaScript -->
+                <script src="{% static 'authentication/js/login.js' %}"></script>
+            </body>
+        </html>
 
 ### 8.  For login and logout functionality, use - 
-- #### Login
-            <a href="{% url 'authentication:login' %}">Login</a> or
-		    <a href='/authentication/'>Login</a>
-- #### The above functionality will redirect to the "next" parameter in the url after logging the user in.
-- #### Logout
-            <a href="{% url 'authentication:logout' %}">Logout</a> or
-		    <a href="/authentication/logout/">Logout</a>
-- #### The above functionality will redirect to the login page after logging the user out.
+- #### To Login, use anyone of these
 
-### 9.  If you have included all the lines mentioned in point 6 and 7, you can also use -
-- #### Login via [Bootstrap Modal](https://getbootstrap.com/docs/5.1/components/modal/)
-            <button data-bs-toggle="modal" data-bs-target="#loginModal">
-                Login
-            </button>
-- #### The above functionality will display the bootstrap login form Modal and reload the current page after logging the user in.
-- #### Logout using JS
-            <a href="" onclick="logout(event);">Logout</a>
-- #### The above functionality will reload the current page after logging the user out
+            - <a href="{% url 'authentication:login' %}">Login</a>
+		    - <a href='/authentication/'>Login</a>
+            - <button class="..." type="..." role="..." data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
 
-### 10. Optionally, use can set the Site Name as a default template variable for your website, by adding the following command to list of `context_processors`. This will set `sitetitle=SITE_TITLE` for all [templates](https://docs.djangoproject.com/en/4.0/ref/templates/api/#using-requestcontext). You can use the variable name `sitetitle` to access the value of `SITE_TITLE`.
+- #### To Logout, use anyone of these
 
-            TEMPLATES = [
-                {
-                    ...
-                    'OPTIONS': {
-                        'context_processors': [
-                            ...
-                            'authentication.contextprocessor.site_title'
-                        ],
-                    },
-                },
-            ]
+            - <a href="{% url 'authentication:logout' %}">Logout</a>
+		    - <a href="/authentication/logout/">Logout</a>
+            - <a href="" onclick="logout(event);">Logout</a>
+
+- #### To visit My Account page and edit profile credentials, use any one of these -
+
+            - <a href="{% url 'authentication:account' username=request.user.username %}">Account</a>
+            - <a href="/authentication/<username>/">Account</a>
+
+### 9. This app uses Bootstrap, Bootstrap Icons, JQuery and Handlebars. These file can be accessed at -
+
+            <link href="{% static 'authentication/assets/node_modules/bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet">
+            <link href="{% static 'authentication/assets/node_modules/bootstrap-icons/font/bootstrap-icons.css' %}" rel="stylesheet">
+
+            <script src="{% static 'authentication/assets/node_modules/bootstrap/dist/js/bootstrap.bundle.js' %}"></script>
+            <script src="{% static 'authentication/assets/node_modules/jquery/dist/jquery.js' %}"></script>
+            <script src="{% static 'authentication/assets/node_modules/handlebars/dist/handlebars.js' %}"></script>
+
 
