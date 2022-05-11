@@ -43,21 +43,21 @@ def login_view(request):
     try:
         SITE_TITLE = settings.SITE_TITLE
     except AttributeError:
-        SITE_TITLE = 'Django Homepage'
+        SITE_TITLE = 'Homepage'
     else:
         SITE_TITLE = settings.SITE_TITLE
     
     try:
-        FAVICON_IO_URL = settings.FAVICON_IO_URL
+        FAVICON = settings.DEFAULT_APP_FAVICON_ICO
     except AttributeError:
-        FAVICON_IO_URL = '/authentication/static/authentication/favicon_io/favicon.ico'
+        FAVICON = False
     else:
-        FAVICON_IO_URL = settings.FAVICON_IO_URL
+        FAVICON = settings.DEFAULT_APP_FAVICON_ICO
 
     context = {
         "login_error": login_error,
         "SITE_TITLE": SITE_TITLE,
-        "FAVICON_IO_URL": FAVICON_IO_URL
+        "FAVICON": FAVICON
     }
     return render(
         request,

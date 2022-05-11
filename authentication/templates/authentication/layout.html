@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{FAVICON_IO_URL}}" type = "image/x-icon">
+    {% if FAVICON %}
+    <link rel="icon" href="{% static 'authentication/favicon_io/favicon.ico' %}" type = "image/x-icon">
+    {% endif %}
 
     <link href="{% static 'authentication/assets/node_modules/bootstrap/dist/css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'authentication/assets/node_modules/bootstrap-icons/font/bootstrap-icons.css' %}" rel="stylesheet">

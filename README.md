@@ -1,6 +1,5 @@
 # Authentication
 A django user authentication and login application.
-Demo Website: https://django-user-login.herokuapp.com/
 
 ### 1.  To install and use the package, use:
         
@@ -32,7 +31,9 @@ Instructions
         EMAIL_HOST_USER = 'email-address'
         EMAIL_HOST_PASSWORD = 'email-password'
         EMAIL_USE_TLS = True
-        FAVICON_URL = '/path/to/favicon.ico'
+        
+        # set this to True if you want the app's default favicon
+        DEFAULT_APP_FAVICON_ICO = False
 
 ### 7 General layout of the starter template / [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1)
 
@@ -90,5 +91,8 @@ Instructions
             <script src="{% static 'authentication/assets/node_modules/bootstrap/dist/js/bootstrap.bundle.js' %}"></script>
             <script src="{% static 'authentication/assets/node_modules/jquery/dist/jquery.js' %}"></script>
             <script src="{% static 'authentication/assets/node_modules/handlebars/dist/handlebars.js' %}"></script>
+
+
+### 10. Check [Demo Website](https://django-user-login.herokuapp.com/)
 
 
