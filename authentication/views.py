@@ -605,14 +605,16 @@ def changePassword(request, username):
     user.set_password(new_password2)
     user.save()
     email = user.email
-    try:
-        send_mail(
-            'Security Information',
-            'Your password was just changed.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=True,
-        )
-    except:
-        pass
+
+    if not settings.DEBUG:
+        try:
+            send_mail(
+                'Security Information',
+                'Your password was just changed.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=True,
+            )
+        except:
+            pass
     return JsonResponse({"success": True})

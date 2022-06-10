@@ -63,4 +63,8 @@ Instructions
 
 ### 10. Check [Demo Website](https://django-user-login.herokuapp.com/)
 
+### 11. Actual EMAILS will not be sent when DEBUG = TRUE
+
+            Verification Codes, if any, will be printed on the console
+
 
