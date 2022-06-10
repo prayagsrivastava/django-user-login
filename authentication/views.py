@@ -617,4 +617,5 @@ def changePassword(request, username):
             )
         except:
             pass
+    logout(request)
     return JsonResponse({"success": True})

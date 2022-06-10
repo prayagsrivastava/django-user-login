@@ -298,7 +298,8 @@ function changepassword(event, username) {
             show_buttons();
             prevent_default = false;
             document.querySelector("#changePasswordModalBtnClose").click();
-            document.querySelector("#pswdChngSuccessMsgBtn").click();
+            //document.querySelector("#pswdChngSuccessMsgBtn").click();
+            location.reload();
         } else {
             show_buttons();
             prevent_default = false;
