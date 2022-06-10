@@ -35,48 +35,16 @@ Instructions
         # set this to True if you want the app's default favicon
         DEFAULT_APP_FAVICON_ICO = False
 
-### 7 General layout of the starter template / [base template](https://docs.djangoproject.com/en/4.0/ref/templates/language/#template-inheritance-1)
-
-        <!doctype html>
-        <html lang="en">
-            <head>
-                ....
-                ....
-
-                <!-- Required meta tags -->
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-
-                <!-- Required Authentication CSS -->
-                <link rel="stylesheet" href="{% static 'authentication/css/layout.css' %}">
-
-                ....
-                ....
-            </head>
-            <body>
-                ....
-                ....
-
-                <!-- Required Authentication Modals -->
-                {% include 'authentication/auth_modals.html' %}
-
-                <!-- Required Authentication JavaScript -->
-                <script src="{% static 'authentication/js/login.js' %}"></script>
-            </body>
-        </html>
-
 ### 8.  For login and logout functionality, use - 
 - #### To Login, use anyone of these
 
             - <a href="{% url 'authentication:login' %}">Login</a>
 		    - <a href='/authentication/'>Login</a>
-            - <button class="..." type="..." role="..." data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
 
 - #### To Logout, use anyone of these
 
             - <a href="{% url 'authentication:logout' %}">Logout</a>
 		    - <a href="/authentication/logout/">Logout</a>
-            - <a href="" onclick="logout(event);">Logout</a>
 
 - #### To visit My Account page and edit profile credentials, use any one of these -
 

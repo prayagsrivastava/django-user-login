@@ -5,13 +5,11 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.db.models import Q
 from . import util
 import random
 from django.conf import settings
 
-@ensure_csrf_cookie
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('/')
@@ -44,8 +42,6 @@ def login_view(request):
         SITE_TITLE = settings.SITE_TITLE
     except AttributeError:
         SITE_TITLE = 'Homepage'
-    else:
-        SITE_TITLE = settings.SITE_TITLE
     
     try:
         FAVICON = settings.DEFAULT_APP_FAVICON_ICO
@@ -125,16 +121,19 @@ def register(request):
         return JsonResponse({"success": False, "message": "This email is associated with another account."})
 
     code = str(random.randint(100000, 999999))
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-    except:
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except:
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["register"] = {
         "first_name": first_name.strip().lower().title(),
@@ -162,18 +161,21 @@ def resendVerificationCode(request):
     
     code = str(random.randint(100000, 999999))
     email = request.session["register"]["email"]
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-    except:
-        request.session["register"].clear()
-        request.session["register"] = None
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except:
+            request.session["register"].clear()
+            request.session["register"] = None
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["register"]["code"] = code
     request.session.modified = True
@@ -220,16 +222,19 @@ def recover(request):
     email = user.email
     code = str(random.randint(100000, 999999))
 
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-    except:
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except:
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["recover"] = {
         "user_id": user.id,
@@ -256,18 +261,21 @@ def resendRecoveryCode(request):
     code = str(random.randint(100000, 999999))
 
     email = request.session["recover"]["email"]
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-    except:
-        request.session["recover"].clear()
-        request.session["recover"] = None
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except:
+            request.session["recover"].clear()
+            request.session["recover"] = None
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
     
     request.session["recover"]["code"] = code
     request.session["recover"]["verified"] = False
@@ -315,16 +323,17 @@ def changepassword(request):
     request.session["recover"].clear()
     request.session["recover"] = None
     email = user.email
-    try:
-        send_mail(
-            'Security Information',
-            'Your password was just changed.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=True,
-        )
-    except:
-        pass
+    if not settings.DEBUG:
+        try:
+            send_mail(
+                'Security Information',
+                'Your password was just changed.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=True,
+            )
+        except:
+            pass
     return JsonResponse({"success": True})
 
 ##############################################################################################################
@@ -341,19 +350,15 @@ def account(request, username):
         SITE_TITLE = settings.SITE_TITLE
     except AttributeError:
         SITE_TITLE = 'Django Authentication'
-    else:
-        SITE_TITLE = settings.SITE_TITLE
     
     try:
-        FAVICON_IO_URL = settings.FAVICON_IO_URL
+        FAVICON = settings.DEFAULT_APP_FAVICON_ICO
     except AttributeError:
-        FAVICON_IO_URL = '/authentication/static/authentication/favicon_io/favicon.ico'
-    else:
-        FAVICON_IO_URL = settings.FAVICON_IO_URL
+        FAVICON = False
 
     context = {
         "SITE_TITLE": SITE_TITLE,
-        "FAVICON_IO_URL": FAVICON_IO_URL
+        "FAVICON": FAVICON
     }
 
     if request.session.get("emailsecurity", False):
@@ -460,23 +465,26 @@ def checkemail(request, username):
         return JsonResponse({"success": False, "message": "This email is associated with another account."})
     
     code = str(random.randint(100000, 999999))
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-        send_mail(
-            'Security Information',
-            f'Email change is under process...',
-            settings.EMAIL_HOST_USER,
-            [request.user.email],
-            fail_silently=False,
-        )
-    except:
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            send_mail(
+                'Security Information',
+                f'Email change is under process...',
+                settings.EMAIL_HOST_USER,
+                [request.user.email],
+                fail_silently=False,
+            )
+        except:
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
 
     request.session["changeEmail"] = {
         "username": request.user.username,
@@ -510,16 +518,19 @@ def reconfirmCheckemail(request, username):
     
     code = str(random.randint(100000, 999999))
     email = request.session["changeEmail"]["new_email"]
-    try:
-        send_mail(
-            'Verification Code',
-            f'Your verification code is {code}.',
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-    except:
-        return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
+    if settings.DEBUG:
+        print(code)
+    else:
+        try:
+            send_mail(
+                'Verification Code',
+                f'Your verification code is {code}.',
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+        except:
+            return JsonResponse({"success": False, "message": "Something went wrong. Please try again later."})
 
     request.session["changeEmail"]["code"] = code
     request.session.modified = True
@@ -552,16 +563,17 @@ def changeEmail(request, username):
     old_email = util.encryptemail(request.session["changeEmail"]["current_email"])
     new_email = util.encryptemail(request.session["changeEmail"]["new_email"])
 
-    try:
-        send_mail(
-            'Security Information',
-            f'Your email was changed from {old_email} to {new_email}.',
-            settings.EMAIL_HOST_USER,
-            [old_email, new_email],
-            fail_silently=False,
-        )
-    except:
-        pass
+    if not settings.DEBUG:
+        try:
+            send_mail(
+                'Security Information',
+                f'Your email was changed from {old_email} to {new_email}.',
+                settings.EMAIL_HOST_USER,
+                [old_email, new_email],
+                fail_silently=False,
+            )
+        except:
+            pass
     del request.session["changeEmail"]
     del request.session["emailsecurity"]
     return JsonResponse({"success": True})
